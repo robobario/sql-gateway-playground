@@ -1,0 +1,52 @@
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
+metadata:
+  name: fraud-detection
+spec:
+  image:  fraud-detection:latest
+  imagePullPolicy: Never
+  flinkVersion: v1_19
+  flinkConfiguration:
+    taskmanager.numberOfTaskSlots: "1"
+    kubernetes.operator.job.restart.failed: "true"
+    state.savepoints.dir: file:///flink-data/savepoints
+    state.checkpoints.dir: file:///flink-data/checkpoints
+    high-availability: org.apache.flink.kubernetes.highavailability.KubernetesHaServicesFactory
+    high-availability.storageDir: file:///flink-data/ha
+    kubernetes.rest-service.exposed.type: NodePort
+  serviceAccount: flink
+  jobManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+  taskManager:
+    resource:
+      memory: "2048m"
+      cpu: 0.5
+  podTemplate:
+    spec:
+      containers:
+        - name: flink-main-container
+          volumeMounts:
+            - mountPath: /flink-data
+              name: flink-volume
+          env:
+            - name: TLS_CLUSTER_CA_CRT
+              valueFrom:
+                secretKeyRef:
+                  name: my-cluster-cluster-ca-cert
+                  key: ca.crt
+            - name: TLS_USER_CRT
+              valueFrom:
+                secretKeyRef:
+                  name: mtls-user
+                  key: user.crt
+            - name: TLS_USER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mtls-user
+                  key: user.key
+      volumes:
+        - name: flink-volume
+          persistentVolumeClaim:
+            claimName: fraud-detection-pvc

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-detection-sql-gateway
+  labels:
+    app: fraud-detection
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fraud-detection
+  template:
+    metadata:
+      labels:
+        app: fraud-detection
+    spec:
+      containers:
+        - name: sql-gateway
+          image: fraud-detection:latest
+          imagePullPolicy: Never
+          command: ['/docker-entrypoint.sh', '/opt/flink/bin/sql-gateway.sh', 'start-foreground']
+          env:
+            - name: FLINK_PROPERTIES
+              value: |
+                     jobmanager.rpc.address: fraud-detection-rest
+                     sql-gateway.endpoint.rest.address: 0.0.0.0
+                     rest.address: fraud-detection-rest
+          ports:
+          - containerPort: 8083

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fraud-detection-sql-gateway
+spec:
+  type: NodePort
+  selector:
+    name: fraud-detection-sql-gateway
+  ports:
+    - protocol: TCP
+      port: 8083
