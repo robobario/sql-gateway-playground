@@ -12,7 +12,7 @@ echo "waiting for kafka to start, may take some time to download down images"
 kubectl wait kafka/my-cluster --for=condition=Ready --timeout=700s
 git checkout kafka.yaml
 echo "creating transactions topic, may take some time to download kafka image"
-kubectl run client -i --image quay.io/strimzi/kafka:latest-kafka-3.7.0 --restart=Never --rm --pod-running-timeout 5m0s -- bin/kafka-topics.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --topic transactions --partitions 1 --create
+kubectl run client -i --image quay.io/strimzi/kafka:latest-kafka-3.7.0 --restart=Never --rm --pod-running-timeout 5m0s -- bin/kafka-topics.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --topic transactions --partitions 3 --create
 echo "building fraud-detection image in minikube"
 minikube image build . -t fraud-detection:latest
 echo "applying flink fraud detection deployment"

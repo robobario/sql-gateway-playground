@@ -5,7 +5,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    name: fraud-detection-sql-gateway
+    app: fraud-detection-sql-gateway
   ports:
     - protocol: TCP
       port: 8083
