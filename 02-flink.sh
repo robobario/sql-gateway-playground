@@ -17,6 +17,8 @@ echo "building fraud-detection image in minikube"
 minikube image build . -t fraud-detection:latest
 echo "applying flink fraud detection deployment"
 kubectl apply -f frauddetection_pvc.yaml
+kubectl apply -f frauddetection2_pvc.yaml
 kubectl apply -f frauddetection_ha.yaml
+kubectl apply -f frauddetection2_ha.yaml
 kubectl apply -f frauddetection_sql_gateway.yaml
 kubectl apply -f frauddetection_sql_gateway_service.yaml
